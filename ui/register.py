@@ -9,7 +9,7 @@ from PyQt5.QtGui import QPixmap
 class StudentForm(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Admin Form")
+        self.setWindowTitle("Register Form")
         self.setGeometry(100, 100, 400, 600)
 
         self.background_label = QLabel(self)
@@ -74,14 +74,13 @@ class StudentForm(QWidget):
         self.signup_btn = QPushButton("Sign Up", self)
         self.signup_btn.setGeometry(100, 490, 200, 50)
         self.signup_btn.setStyleSheet(button_style)
-        self.signup_btn.clicked.connect(self.open_complaint_user)
+        self.signup_btn.clicked.connect(self.open_user_login)
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
-    def open_complaint_user(self):
-
-        subprocess.Popen([sys.executable, "complaintUser.py"])
+    def open_user_login(self):
+        subprocess.Popen([sys.executable, "loginUser.py"])
         self.close()
 
 if __name__ == "__main__":

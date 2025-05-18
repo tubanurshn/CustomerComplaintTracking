@@ -2,10 +2,12 @@ import sys
 import subprocess
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
-    QPushButton
+    QPushButton, QMessageBox
 )
 from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtCore import Qt
+
+from database.db_connection import check_student_login
 
 
 class StudentForm(QWidget):
@@ -66,7 +68,7 @@ class StudentForm(QWidget):
         self.admin_btn = QPushButton("User Login", self)
         self.admin_btn.setGeometry(100, 430, 200, 50)
         self.admin_btn.setStyleSheet(button_style)
-        self.admin_btn.clicked.connect(self.open_user_login)
+        self.admin_btn.clicked.connect(self.try_login)
 
         # "Don't have an account? Click here"
         self.register_label = QLabel(self)
@@ -92,12 +94,33 @@ class StudentForm(QWidget):
         self.forgot_label.setCursor(QCursor(Qt.PointingHandCursor))
         self.forgot_label.linkActivated.connect(self.open_forgot_password)
 
+    def try_login(self):
+        student_no = self.student_no.text()
+        password = self.password.text()
+
+        if not student_no or not password:
+            QMessageBox.warning(self, "Missing Information", "Please enter both student number and password.")
+            return
+
+        # Veritabanı kontrolü
+        if check_student_login(student_no, password):
+            QMessageBox.information(self, "Success", "Login successful!")
+            # Giriş sonrası yapmak istediğin işlemler
+            # Örnek: admin login penceresini açma kısmı buraya
+            # subprocess.Popen([sys.executable, "sikayetFrame.py"]) gibi
+            self.close()
+        else:
+            QMessageBox.warning(self, "Error", "Student number or password is incorrect!")
+
+
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
-    def open_user_login(self):
-
-        subprocess.Popen([sys.executable, "complaintUser.py"])
+    def open_admin_login(self):
+        student_no = self.student_no.text()
+        password = self.password.text()
+        print(f"Student No: {student_no}, Password: {password}")
+        subprocess.Popen([sys.executable, "loginAdmin.py"])
         self.close()
 
     def open_register(self):
