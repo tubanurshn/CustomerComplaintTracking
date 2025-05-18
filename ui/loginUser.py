@@ -66,7 +66,7 @@ class StudentForm(QWidget):
         self.admin_btn = QPushButton("User Login", self)
         self.admin_btn.setGeometry(100, 430, 200, 50)
         self.admin_btn.setStyleSheet(button_style)
-        self.admin_btn.clicked.connect(self.open_admin_login)
+        self.admin_btn.clicked.connect(self.open_user_login)
 
         # "Don't have an account? Click here"
         self.register_label = QLabel(self)
@@ -95,11 +95,9 @@ class StudentForm(QWidget):
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
-    def open_admin_login(self):
-        student_no = self.student_no.text()
-        password = self.password.text()
-        print(f"Student No: {student_no}, Password: {password}")
-        subprocess.Popen([sys.executable, "loginAdmin.py"])
+    def open_user_login(self):
+
+        subprocess.Popen([sys.executable, "complaintUser.py"])
         self.close()
 
     def open_register(self):
