@@ -64,17 +64,14 @@ class StudentForm(QWidget):
         self.admin_btn = QPushButton("Admin Login", self)
         self.admin_btn.setGeometry(100, 430, 200, 50)
         self.admin_btn.setStyleSheet(button_style)
-        self.admin_btn.clicked.connect(self.open_admin_login)
+        self.admin_btn.clicked.connect(self.open_complaint_admin)
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
-    def open_admin_login(self):
-        admin_mail = self.admin_mail.text()
-        password = self.password.text()
-        print(f"Admin mail: {admin_mail}, Password: {password}")
+    def open_complaint_admin(self):
 
-        subprocess.Popen([sys.executable, "loginAdmin.py"])
+        subprocess.Popen([sys.executable, "complaintAdmin.py"])
         self.close()
 
 if __name__ == "__main__":
