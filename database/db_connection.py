@@ -57,3 +57,59 @@ def check_student_login(student_number, password):
             conn.close()
 
 
+# registerdan alınan verileri databaase yüklemek için
+def addUserToDatabase(full_name, student_number, password, email):
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="tuba3466",
+            database="user_infos"
+        )
+        cursor = conn.cursor()
+
+        sql = (
+            "INSERT INTO ogrenciler (full_name, student_number, password, eposta) "
+            "VALUES (%s, %s, %s, %s)"
+        )
+        vals = (full_name, student_number, password, email)
+        cursor.execute(sql, vals)
+        conn.commit()
+        print("✅ Kayıt başarılı.")
+        return True
+
+    except mysql.connector.Error as err:
+        print("❌ Hata:", err)
+        return False
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+
+def isUserExist(student_number, email):
+    try:
+        conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="tuba3466",
+            database="user_infos"
+        )
+        cursor = conn.cursor()
+
+        sql = "SELECT * FROM ogrenciler WHERE student_number = %s OR eposta = %s"
+        vals = (student_number, email)
+        cursor.execute(sql, vals)
+        result = cursor.fetchone()
+        return result is not None
+
+    except mysql.connector.Error as err:
+        print("❌ Hata:", err)
+        return False
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()

@@ -2,9 +2,11 @@ import sys
 import subprocess
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
-    QPushButton
+    QPushButton, QMessageBox
 )
 from PyQt5.QtGui import QPixmap
+from database.db_connection import addUserToDatabase, isUserExist
+
 
 class StudentForm(QWidget):
     def __init__(self):
@@ -13,7 +15,8 @@ class StudentForm(QWidget):
         self.setGeometry(100, 100, 400, 600)
 
         self.background_label = QLabel(self)
-        self.background_label.setPixmap(QPixmap("../assets/images/registerr.jpg"))
+        #self.background_label.setPixmap(QPixmap("../assets/images/registerr.jpg"))
+        self.background_label.setPixmap(QPixmap())
         self.background_label.setScaledContents(True)
         self.background_label.resize(self.size())
         self.background_label.lower()
@@ -74,10 +77,33 @@ class StudentForm(QWidget):
         self.signup_btn = QPushButton("Sign Up", self)
         self.signup_btn.setGeometry(100, 490, 200, 50)
         self.signup_btn.setStyleSheet(button_style)
-        self.signup_btn.clicked.connect(self.open_user_login)
+        self.signup_btn.clicked.connect(self.register_user)
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
+
+    def register_user(self):
+        full_name = self.user_name.text().strip()
+        student_number = self.student_no.text().strip()
+        password = self.password.text().strip()
+        email = self.user_mail.text().strip()
+
+        # Basit kontroller
+        if not full_name or not student_number or not password or not email:
+            QMessageBox.warning(self, "Uyarı", "Lütfen tüm alanları doldurun.")
+            return
+
+        # Kullanıcı zaten varsa uyar
+        if isUserExist(student_number, email):
+            QMessageBox.warning(self, "Uyarı", "Bu öğrenci numarası veya e-posta zaten kayıtlı.")
+            return
+
+        # Kullanıcıyı ekle
+        if addUserToDatabase(full_name, student_number, password, email):
+            QMessageBox.information(self, "Başarılı", "Kayıt başarılı.")
+            self.open_user_login()
+        else:
+            QMessageBox.critical(self, "Hata", "Kayıt sırasında bir hata oluştu.")
 
     def open_user_login(self):
         subprocess.Popen([sys.executable, "loginUser.py"])
@@ -85,7 +111,8 @@ class StudentForm(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StudentForm()
+    window = QWidget()
+    window.setWindowTitle("Test Window")
+    window.resize(400, 300)
     window.show()
     sys.exit(app.exec_())
-
