@@ -7,11 +7,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtCore import Qt
 
-<<<<<<< Updated upstream
-from db.db_connection import check_student_login
-=======
+
 from database.db_connection import check_student_login
->>>>>>> Stashed changes
 
 
 class StudentForm(QWidget):

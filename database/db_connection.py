@@ -2,7 +2,7 @@ import mysql.connector
 
 config = {
     'user': 'root',
-    'password': 'tuba3466',
+    'password': 'Bk.25122512',
     'host': 'localhost',
     'database': 'user_infos',
     'raise_on_warnings': True
@@ -12,7 +12,7 @@ try:
     conn = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='tuba3466',
+        password='Bk.25122512',
         database='user_infos',
         raise_on_warnings=True
     )
@@ -43,7 +43,7 @@ def check_student_login(student_number, password):
         conn = mysql.connector.connect(
             host = "localhost",
             user = "root",
-            password = "tuba3466",
+            password = "Bk.25122512",
             database = "user_infos"
         )
         cursor = conn.cursor()
@@ -69,7 +69,7 @@ def addUserToDatabase(full_name, student_number, password, email):
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="tuba3466",
+            password="Bk.25122512",
             database="user_infos"
         )
         cursor = conn.cursor()
@@ -100,7 +100,7 @@ def isUserExist(student_number, email):
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="tuba3466",
+            password="Bk.25122512",
             database="user_infos"
         )
         cursor = conn.cursor()
