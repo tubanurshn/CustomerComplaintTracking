@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
     QPushButton, QMessageBox
 )
 from PyQt5.QtGui import QPixmap
-from database import addUserToDatabase, isUserExist
+from database.db_connection import addUserToDatabase, isUserExist
 
 
 
@@ -16,7 +16,7 @@ class StudentForm(QWidget):
         self.setGeometry(100, 100, 400, 600)
 
         self.background_label = QLabel(self)
-        #self.background_label.setPixmap(QPixmap("../assets/images/registerr.jpg"))
+        self.background_label.setPixmap(QPixmap("../assets/images/registerr.jpg"))
         self.background_label.setPixmap(QPixmap())
         self.background_label.setScaledContents(True)
         self.background_label.resize(self.size())
