@@ -78,11 +78,16 @@ class StudentForm(QWidget):
         self.signup_btn = QPushButton("Sign Up", self)
         self.signup_btn.setGeometry(100, 490, 200, 50)
         self.signup_btn.setStyleSheet(button_style)
+<<<<<<< Updated upstream
         self.signup_btn.clicked.connect(self.register_user)
+=======
+        self.signup_btn.clicked.connect(self.open_user_login)
+>>>>>>> Stashed changes
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
+<<<<<<< Updated upstream
     def register_user(self):
         full_name = self.user_name.text().strip()
         student_number = self.student_no.text().strip()
@@ -106,6 +111,8 @@ class StudentForm(QWidget):
         else:
             QMessageBox.critical(self, "Hata", "Kayıt sırasında bir hata oluştu.")
 
+=======
+>>>>>>> Stashed changes
     def open_user_login(self):
         subprocess.Popen([sys.executable, "loginUser.py"])
         self.close()
