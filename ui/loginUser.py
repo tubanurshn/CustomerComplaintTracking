@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtCore import Qt
 
-from database.db_connection import check_student_login
+from db.db_connection import check_student_login
 
 
 class StudentForm(QWidget):

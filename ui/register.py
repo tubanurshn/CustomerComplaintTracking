@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import (
     QPushButton, QMessageBox
 )
 from PyQt5.QtGui import QPixmap
-from database.db_connection import addUserToDatabase, isUserExist
+from db.db_connection import addUserToDatabase, isUserExist
+
 
 
 class StudentForm(QWidget):

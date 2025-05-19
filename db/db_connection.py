@@ -9,7 +9,13 @@ config = {
 }
 
 try:
-    conn = mysql.connector.connect(**config)
+    conn = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='tuba3466',
+        database='user_infos',
+        raise_on_warnings=True
+    )
     if conn.is_connected():
         print("✅ Bağlantı başarılı.")
 
