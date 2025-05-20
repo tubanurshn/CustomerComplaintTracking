@@ -1,86 +1,123 @@
 import sys
-import subprocess
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
-    QVBoxLayout, QPushButton
+    QPushButton, QTextEdit, QComboBox,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout
 )
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
+
 
 class StudentForm(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Form")
-        self.setGeometry(100, 100, 1000, 600)  # Pencere boyutu
+        self.setGeometry(100, 100, 1500, 1000)
 
-        # --- Arka plan QLabel ---
+        # Arka plan resmi
         self.background_label = QLabel(self)
         self.background_label.setPixmap(QPixmap("../assets/images/mainAdmin.jpg"))
         self.background_label.setScaledContents(True)
         self.background_label.resize(self.size())
-        self.background_label.lower()  # Arka plana al
+        self.background_label.lower()
 
-        # --- Form içeriği ---
-        self.student_no = QLineEdit()
-        self.mail = QLineEdit()
-        self.password = QLineEdit()
-        self.password.setEchoMode(QLineEdit.Password)
-
-        # Input style (şeffaf ve köşeli)
-        line_edit_style = """
-            QLineEdit {
-                background-color: rgba(255, 255, 255, 200);
-                padding: 8px;
-                border-radius: 10px;
-                font-size: 16px;
+        # --- Sol Üst: TableWidget ---
+        self.table = QTableWidget(self)
+        self.table.setGeometry(50, 50, 600, 300)
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(["Ad", "Soyad", "Şirket"])
+        self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.verticalHeader().setVisible(True)
+        self.table.setColumnWidth(2, 150)
+        self.table.setStyleSheet("""
+            QTableWidget {
+                background-color: #E0F7FA;
+                color: #003366;
+                font-weight: bold;
+                gridline-color: #B0BEC5;
             }
-        """
-        self.student_no.setStyleSheet(line_edit_style)
-        self.mail.setStyleSheet(line_edit_style)
-        self.password.setStyleSheet(line_edit_style)
+            QHeaderView::section {
+                background-color: #B2EBF2;
+                color: #003366;
+                font-weight: bold;
+            }
+        """)
+        for i in range(10):
+            self.table.insertRow(i)
+            self.table.setItem(i, 0, QTableWidgetItem(f"Ad {i + 1}"))
+            self.table.setItem(i, 1, QTableWidgetItem(f"Soyad {i + 1}"))
+            self.table.setItem(i, 2, QTableWidgetItem("Kusha Engineering"))
 
-        # Butonlar için stil (beyaz arka plan, siyah yazı)
-        button_style = """
+        # --- Sol Alt: LineEdit + TextEdit + ComboBox + Button ---
+        self.comment_input = QLineEdit(self)
+        self.comment_input.setPlaceholderText("Student Id:")
+        #self.comment_input.setGeometry(50, 380, 400, 30)
+        self.comment_input.setGeometry(70,480,400,30)
+
+
+        self.comment_area = QTextEdit(self)
+        self.comment_area.setGeometry(70, 560, 400, 200)
+        self.comment_area.setPlaceholderText("Answer to the request from student:")
+
+        self.combo = QComboBox(self)
+        self.combo.setGeometry(470, 820, 120, 30)
+        self.combo.addItems(["İşlem Seçin", "Reddet", "İşleme Al"])
+
+        self.send_btn = QPushButton("Gönder", self)
+        self.send_btn.setGeometry(470, 470, 120, 30)
+
+        # --- Sağ Panel: Sabit boyutlu TextEdit ---
+        self.right_text_area = QTextEdit(self)
+        self.right_text_area.setGeometry(890, 90, 400, 770)
+        self.right_text_area.setPlaceholderText("Detayları buraya yazın...")
+        self.right_text_area.setReadOnly(False)
+
+        # Stil ayarları
+        self.comment_input.setStyleSheet("""
+            QLineEdit {
+                background-color: rgba(255, 255, 255, 230);
+                padding: 6px;
+                border-radius: 10px;
+                font-size: 14px;
+            }
+        """)
+        self.comment_area.setStyleSheet("""
+            QTextEdit {
+                background-color: rgba(255, 255, 255, 230);
+                border-radius: 10px;
+                font-size: 14px;
+            }
+        """)
+        self.right_text_area.setStyleSheet("""
+            QTextEdit {
+                background-color: rgba(255, 255, 255, 230);
+                border-radius: 10px;
+                font-size: 14px;
+            }
+        """)
+        self.combo.setStyleSheet("""
+            QComboBox {
+                background-color: white;
+                border-radius: 10px;
+                padding: 5px;
+                font-size: 14px;
+            }
+        """)
+        self.send_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
                 color: black;
                 border-radius: 10px;
-                font-size: 16px;
-                padding: 8px;
+                font-size: 14px;
+                padding: 6px;
             }
             QPushButton:hover {
                 background-color: #e0e0e0;
             }
-        """
-
-        self.student_btn = QPushButton("Student Login", self)
-        self.student_btn.setGeometry(220, 170, 190, 80)
-        self.student_btn.setStyleSheet(button_style)
-        self.student_btn.clicked.connect(self.open_student_login)
-
-        self.admin_btn = QPushButton("Admin Login", self)
-        self.admin_btn.setGeometry(220, 450, 190, 80)
-        self.admin_btn.setStyleSheet(button_style)
-        self.admin_btn.clicked.connect(self.open_admin_login)
-
-        main_layout = QVBoxLayout()
-        main_layout.addStretch()
-        main_layout.addStretch()
-        main_layout.addStretch()
-
-        self.setLayout(main_layout)
+        """)
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
-
-    def open_student_login(self):
-        # loginUser.py yi çalıştır
-        subprocess.Popen([sys.executable, "loginUser.py"])
-        self.close()  # Mevcut pencereyi kapat
-
-    def open_admin_login(self):
-        # loginAdmin.py yi çalıştır
-        subprocess.Popen([sys.executable, "loginAdmin.py"])
-        self.close()  # Mevcut pencereyi kapat
 
 
 if __name__ == "__main__":
