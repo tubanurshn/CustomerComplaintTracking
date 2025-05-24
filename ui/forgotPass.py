@@ -5,8 +5,11 @@ from PyQt5.QtWidgets import (
     QPushButton
 )
 from PyQt5.QtGui import QPixmap
+from forgotPass2 import ForgotPass2Form
+from ui.complaintAdmin import ComplaintAdminForm
 
-class StudentForm(QWidget):
+
+class ForgotPassForm(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Admin Form")
@@ -58,18 +61,19 @@ class StudentForm(QWidget):
         self.admin_btn = QPushButton("Admin Login", self)
         self.admin_btn.setGeometry(100, 430, 200, 50)
         self.admin_btn.setStyleSheet(button_style)
-        self.admin_btn.clicked.connect(self.open_complaint_admin)
+        self.admin_btn.clicked.connect(self.open_forgotPass2)
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
-    def open_complaint_admin(self):
-
-        subprocess.Popen([sys.executable, "complaintAdmin.py"])
+    def open_forgotPass2(self):
+        self.forgotp2_window = ForgotPass2Form()
+        self.forgotp2_window.show()
         self.close()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StudentForm()
+    window = ForgotPassForm()
     window.show()
     sys.exit(app.exec_())
