@@ -2,16 +2,17 @@ import sys
 import subprocess
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
-    QPushButton, QMessageBox
+    QPushButton, QMessageBox, QVBoxLayout
 )
 from PyQt5.QtGui import QPixmap, QCursor
 from PyQt5.QtCore import Qt
 
 
 from database.db_connection import check_student_login
+from complaintUser import ComplaintUserForm
+from ui.forgotPass import ForgotPassForm
 
-
-class StudentForm(QWidget):
+class LoginUserForm(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Form")
@@ -29,12 +30,14 @@ class StudentForm(QWidget):
                 padding: 8px;
                 border-radius: 10px;
                 font-size: 16px;
+                color: black; /* Yazı rengi siyah */
             }
         """
+
         button_style = """
             QPushButton {
                 background-color: white;
-                color: black;
+                color: black; /* Yazı rengi siyah */
                 border-radius: 10px;
                 font-size: 16px;
                 padding: 8px;
@@ -103,12 +106,15 @@ class StudentForm(QWidget):
             QMessageBox.warning(self, "Missing Information", "Please enter both student number and password.")
             return
 
+
         # Veritabanı kontrolü
         if check_student_login(student_no, password):
+            #subprocess.Popen([sys.executable, "complaintUser.py"])
+            #self.close()
             QMessageBox.information(self, "Success", "Login successful!")
-            # Giriş sonrası yapmak istediğin işlemler
-            # Örnek: admin login penceresini açma kısmı buraya
-            # subprocess.Popen([sys.executable, "sikayetFrame.py"]) gibi
+            #BURADA GERÇEK STU NUMBERI ALIYOR SU ANDA
+            self.complaint_window = ComplaintUserForm(student_number=student_no)
+            self.complaint_window.show()
             self.close()
         else:
             QMessageBox.warning(self, "Error", "Student number or password is incorrect!")
@@ -121,20 +127,30 @@ class StudentForm(QWidget):
         student_no = self.student_no.text()
         password = self.password.text()
         print(f"Student No: {student_no}, Password: {password}")
-        subprocess.Popen([sys.executable, "loginAdmin.py"])
+        #subprocess.Popen([sys.executable, "loginAdmin.py"])
+        from loginAdmin import LoginAdminForm
+
+        self.logAdin_window=LoginAdminForm()
+        self.logAdin_window.show()
         self.close()
 
     def open_register(self):
-        subprocess.Popen([sys.executable, "register.py"])
+        #subprocess.Popen([sys.executable, "register.py"])
+        from ui.register import RegisterForm
+
+        self.reg_window=RegisterForm()
+        self.reg_window.show()
         self.close()
 
     def open_forgot_password(self):
-        subprocess.Popen([sys.executable, "forgot_password.py"])
+        #subprocess.Popen([sys.executable, "forgot_password.py"])
+        self.forgotPass_window=ForgotPassForm()
+        self.forgotPass_window.show()
         self.close()
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StudentForm()
+    window = LoginUserForm()
     window.show()
     sys.exit(app.exec_())
