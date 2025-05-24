@@ -8,7 +8,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
 
-class StudentForm(QWidget):
+class ComplaintAdminForm(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Form")
@@ -122,6 +122,6 @@ class StudentForm(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StudentForm()
+    window = ComplaintAdminForm()
     window.show()
     sys.exit(app.exec_())
