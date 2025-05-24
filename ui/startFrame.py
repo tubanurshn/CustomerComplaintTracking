@@ -1,14 +1,19 @@
 import sys
 import subprocess
+from loginAdmin import LoginAdminForm
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
     QVBoxLayout, QPushButton
 )
 from PyQt5.QtGui import QPixmap
 
-class StudentForm(QWidget):
+
+class StartFrameForm(QWidget):
     def __init__(self):
+
         super().__init__()
+        #self.app = app APP KULLANILIMIYOR KALDIR DEDİ CHAT BCSDİĞER CLASSLARDAN BURAYI
+        #AÇMAYA ÇALIŞINCA PARAMETRE OLARAK EKLİYORDUK VE TANIMLI DEĞİLDİ FLN GEREKSİZDİ
         self.setWindowTitle("Student Form")
         self.setGeometry(100, 100, 1000, 600)  # Pencere boyutu
 
@@ -73,18 +78,22 @@ class StudentForm(QWidget):
         self.background_label.resize(self.size())
 
     def open_student_login(self):
-        # loginUser.py yi çalıştır
-        subprocess.Popen([sys.executable, "loginUser.py"])
+        from loginUser import LoginUserForm #CIRCULAR IMPORT HATSI YÜZÜNDEN BURADA İMPORTLADIM
+
+        self.new_window = LoginUserForm()
+        self.new_window.show()
         self.close()  # Mevcut pencereyi kapat
 
     def open_admin_login(self):
         # loginAdmin.py yi çalıştır
-        subprocess.Popen([sys.executable, "loginAdmin.py"])
-        self.close()  # Mevcut pencereyi kapat
+        self.new_window = LoginAdminForm()
+        self.new_window.show()
+        self.close() # Mevcut pencereyi kapat
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StudentForm()
+    app.setQuitOnLastWindowClosed(False)
+    window = StartFrameForm()
     window.show()
     sys.exit(app.exec_())
