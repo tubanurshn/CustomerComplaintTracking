@@ -8,8 +8,10 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPixmap
 from database.db_connection import addUserToDatabase, isUserExist  # Bu fonksiyonlar doğru tanımlanmalı
+from ui.startFrame import StartFrameForm
 
-class StudentForm(QWidget):
+
+class RegisterForm(QWidget):
     def __init__(self):  # <-- HATA DÜZELTİLDİ
         super().__init__()
         self.setWindowTitle("Register Form")
@@ -113,17 +115,27 @@ class StudentForm(QWidget):
 
         if addUserToDatabase(full_name, student_number, password, email):
             QMessageBox.information(self, "Başarılı", "Kayıt başarılı.")
-            self.open_user_login()
+            self.open_start_frame()
         else:
             QMessageBox.critical(self, "Hata", "Kayıt sırasında bir hata oluştu.")
 
+    def open_start_frame(self):
+        #subprocess.Popen([sys.executable, "startFrame.py"])
+        self.start_window=StartFrameForm() #app koymamı chat söyledi ama bunu anlamadımm app ??
+        self.start_window.show()
+        self.close()
+
     def open_user_login(self):
-        subprocess.Popen([sys.executable, "loginUser.py"])
+        #subprocess.Popen([sys.executable, "loginUser.py"])
+        from ui.loginUser import LoginUserForm
+
+        self.logUser_window=LoginUserForm()
+        self.logUser_window.show()
         self.close()
 
 # --- PROGRAMI BAŞLATAN KISIM ---
 if __name__ == "__main__":  # <-- HATA DÜZELTİLDİ
     app = QApplication(sys.argv)
-    form = StudentForm()
+    form = RegisterForm()
     form.show()
     sys.exit(app.exec_())
