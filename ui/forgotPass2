@@ -44,23 +44,23 @@ class ForgotPass2Form(QWidget):
         # Admin Mail Label ve Input
 
 
-        self.admin_mail = QLineEdit(self)
-        self.admin_mail.setPlaceholderText("")
-        self.admin_mail.setGeometry(160, 240, 160, 40)
-        self.admin_mail.setStyleSheet(input_style)
+        self.newPassword = QLineEdit(self)
+        self.newPassword.setPlaceholderText("")
+        self.newPassword.setGeometry(160, 240, 160, 40)
+        self.newPassword.setStyleSheet(input_style)
 
 
 
-        self.password = QLineEdit(self)
-        self.password.setPlaceholderText("")
-        self.password.setGeometry(230, 355, 80, 40)
-        self.password.setStyleSheet(input_style)
+        self.newPasswordAgain = QLineEdit(self)
+        self.newPasswordAgain.setPlaceholderText("")
+        self.newPasswordAgain.setGeometry(230, 355, 80, 40)
+        self.newPasswordAgain.setStyleSheet(input_style)
 
         # Admin Login Button
-        self.admin_btn = QPushButton("Admin Login", self)
-        self.admin_btn.setGeometry(100, 430, 200, 50)
-        self.admin_btn.setStyleSheet(button_style)
-        
+        self.guncellePassword = QPushButton("Admin Login", self)
+        self.guncellePassword.setGeometry(100, 430, 200, 50)
+        self.guncellePassword.setStyleSheet(button_style)
+
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
@@ -71,4 +71,3 @@ if __name__ == "__main__":
     window = ForgotPass2Form()
     window.show()
     sys.exit(app.exec_())
-
