@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
 from database.db_connection import addAdminToDatabase, isAdminExist
+from ui.loginAdmin import LoginAdminForm
 
 
 class AdminRegisterForm(QWidget):
@@ -107,7 +108,9 @@ class AdminRegisterForm(QWidget):
 
         if addAdminToDatabase(full_name, email, password, category):
             QMessageBox.information(self, "Success", "Admin registered successfully.")
-            subprocess.Popen([sys.executable, "loginAdmin.py"])
+            #subprocess.Popen([sys.executable, "loginAdmin.py"])
+            loginAdmin_window=LoginAdminForm()
+            loginAdmin_window.show()
             self.close()
         else:
             QMessageBox.critical(self, "Error", "Error occurred during registration.")

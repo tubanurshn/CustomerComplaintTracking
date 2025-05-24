@@ -9,6 +9,8 @@ from PyQt5.QtCore import Qt
 
 
 from database.db_connection import check_student_login
+from database.db_connection import get_student_by_login
+
 from complaintUser import ComplaintUserForm
 from ui.forgotPass import ForgotPassForm
 
@@ -98,41 +100,65 @@ class LoginUserForm(QWidget):
         self.forgot_label.setCursor(QCursor(Qt.PointingHandCursor))
         self.forgot_label.linkActivated.connect(self.open_forgot_password)
 
+    # def try_login(self):
+    #     student_no = self.student_no.text()
+    #     password = self.password.text()
+    #
+    #     if not student_no or not password:
+    #         QMessageBox.warning(self, "Missing Information", "Please enter both student number and password.")
+    #         return
+    #
+    #
+    #     # Veritabanı kontrolü
+    #    if check_student_login(student_no, password):
+    #         #subprocess.Popen([sys.executable, "complaintUser.py"])
+    #         #self.close()
+    #         QMessageBox.information(self, "Success", "Login successful!")
+    #         #BURADA GERÇEK STU NUMBERI ALIYOR SU ANDA
+    #         self.complaint_window = ComplaintUserForm(student_number=student_no)
+    #         self.complaint_window.show()
+    #         self.close()
+    #     else:
+    #         QMessageBox.warning(self, "Error", "Student number or password is incorrect!")
+
     def try_login(self):
-        student_no = self.student_no.text()
-        password = self.password.text()
+        student_no = self.student_no.text().strip()
+        password = self.password.text().strip()
 
         if not student_no or not password:
-            QMessageBox.warning(self, "Missing Information", "Please enter both student number and password.")
+            QMessageBox.warning(self, "Eksik Bilgi", "Lütfen öğrenci numarası ve şifre girin.")
             return
 
+        # Giriş yapan öğrencinin idsine falan ulaşıyoruz ki bu idyi kaydedelim ve complimentte bunu kullanalım
+        student_data = get_student_by_login(student_no, password)
 
-        # Veritabanı kontrolü
-        if check_student_login(student_no, password):
-            #subprocess.Popen([sys.executable, "complaintUser.py"])
-            #self.close()
-            QMessageBox.information(self, "Success", "Login successful!")
-            #BURADA GERÇEK STU NUMBERI ALIYOR SU ANDA
-            self.complaint_window = ComplaintUserForm(student_number=student_no)
+        if check_student_login(student_no, password):  # Eğer giriş başarılıysa
+            student_id = student_data[0]  # ogrenciler.id
+            student_number = student_data[1]  # ogrenciler.student_number
+
+            QMessageBox.information(self, "Başarılı", "Giriş başarılı!")
+
+            # Şikayet ekranını açarken hem id hem student_number geçiyoruz
+            self.complaint_window = ComplaintUserForm(ogrenci_id=student_id, student_number=student_number)
             self.complaint_window.show()
             self.close()
-        else:
-            QMessageBox.warning(self, "Error", "Student number or password is incorrect!")
 
+        else:
+            QMessageBox.warning(self, "Hata", "Öğrenci numarası veya şifre yanlış!")
 
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
-
-    def open_admin_login(self):
-        student_no = self.student_no.text()
-        password = self.password.text()
-        print(f"Student No: {student_no}, Password: {password}")
-        #subprocess.Popen([sys.executable, "loginAdmin.py"])
-        from loginAdmin import LoginAdminForm
-
-        self.logAdin_window=LoginAdminForm()
-        self.logAdin_window.show()
-        self.close()
+#BEN BU FONKSİYON KARDEŞİM NE ALAKAAAAA TR A0
+    # def open_admin_login(self):
+    #     student_no = self.student_no.text()
+    #     password = self.password.text()
+    #     print(f"Student No: {student_no}, Password: {password}")
+    #     #subprocess.Popen([sys.executable, "loginAdmin.py"])
+    #     from loginAdmin import LoginAdminForm
+    #
+    #     self.logAdin_window=LoginAdminForm()
+    #     self.logAdin_window.show()
+    #     self.close()
 
     def open_register(self):
         #subprocess.Popen([sys.executable, "register.py"])

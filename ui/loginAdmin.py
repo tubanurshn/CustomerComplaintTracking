@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap
 
 from ui.complaintAdmin import ComplaintAdminForm
-from admin_register import AdminRegisterForm
+from adminReg import AdminRegisterForm
 
 class LoginAdminForm(QWidget):
     def __init__(self):

@@ -9,10 +9,10 @@ from database.db_connection import addComplaintToDatabase, get_complaints_by_stu
 
 
 class ComplaintUserForm(QWidget):
-    def __init__(self, student_number=None):
+    def __init__(self,ogrenci_id=None, student_number=None):
         super().__init__()
         self.student_number = student_number
-
+        self.ogrenci_id = ogrenci_id
         self.setWindowTitle("Student Form")
         self.setGeometry(100, 100, 1500, 1000)
 
@@ -124,7 +124,38 @@ class ComplaintUserForm(QWidget):
         self.load_user_complaints()
         self.load_public_complaints()
 
+    # def complaint_user(self):
+    #     student_number = self.student_number
+    #     status = "işleniyor"
+    #     answer = ""
+    #     complaint = self.complaint_text.toPlainText().strip()
+    #     category = self.category_combo.currentText().strip()
+    #
+    #     if self.radio_public.isChecked():
+    #         privacy = "public"
+    #     elif self.radio_private.isChecked():
+    #         privacy = "private"
+    #     else:
+    #         QMessageBox.warning(self, "Uyarı", "Lütfen gizlilik tercihini seçin.")
+    #         return
+    #
+    #     if not complaint or category == "Select Category":
+    #         QMessageBox.warning(self, "Uyarı", "Lütfen tüm alanları doldurun.")
+    #         return
+    #
+    #     if len(complaint) < 10:
+    #         QMessageBox.warning(self, "Uyarı", "Lütfen şikayetinizi en az 10 karakter olacak şekilde girin.")
+    #         return
+    #
+    #     if addComplaintToDatabase(student_number, status, complaint, privacy, answer, category):
+    #         QMessageBox.information(self, "Başarılı", "Kayıt başarılı.")
+    #         self.load_user_complaints()
+    #         self.complaint_text.clear()
+    #     else:
+    #         QMessageBox.critical(self, "Hata", "Kayıt sırasında bir hata oluştu.")
+
     def complaint_user(self):
+        ogrenci_id = self.ogrenci_id  # Girişte alınan id
         student_number = self.student_number
         status = "işleniyor"
         answer = ""
@@ -147,7 +178,7 @@ class ComplaintUserForm(QWidget):
             QMessageBox.warning(self, "Uyarı", "Lütfen şikayetinizi en az 10 karakter olacak şekilde girin.")
             return
 
-        if addComplaintToDatabase(student_number, status, complaint, privacy, answer, category):
+        if addComplaintToDatabase(ogrenci_id, student_number, status, complaint, privacy, answer, category):
             QMessageBox.information(self, "Başarılı", "Kayıt başarılı.")
             self.load_user_complaints()
             self.complaint_text.clear()
@@ -155,8 +186,8 @@ class ComplaintUserForm(QWidget):
             QMessageBox.critical(self, "Hata", "Kayıt sırasında bir hata oluştu.")
 
     def load_user_complaints(self):
-        complaints = get_complaints_by_student(self.student_number)
-        self.userCompTable.setRowCount(0)
+        complaints = get_complaints_by_student(self.ogrenci_id)
+        self.userCompTable.setRowCount(0) #tabloyu sıfırlıyor
 
         for i, row in enumerate(complaints):
             self.userCompTable.insertRow(i)
