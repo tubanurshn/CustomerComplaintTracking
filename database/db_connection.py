@@ -2,9 +2,9 @@ import mysql.connector
 
 config = {
     'user': 'root',
-    'password': 'Root23',
+    'password': 'Bk.25122512',
     'host': 'localhost',
-    'database': 'user_infos',
+    'database': 'proje',
     'raise_on_warnings': True
 }
 
@@ -34,12 +34,7 @@ finally:
 
 def check_student_login(student_number, password):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
         query = "SELECT * FROM ogrenciler WHERE student_number = %s AND password = %s"
         cursor.execute(query, (student_number, password))
@@ -56,14 +51,10 @@ def check_student_login(student_number, password):
             conn.close()
 
 
+
 def addUserToDatabase(full_name, student_number, password, email):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
 
         sql = (
@@ -86,50 +77,16 @@ def addUserToDatabase(full_name, student_number, password, email):
             conn.close()
 
 
-# def addComplaintToDatabase(student_number, status, compliment, privacy, answer, category):
-#     try:
-#         conn = mysql.connector.connect(
-#             host="localhost",
-#             user="root",
-#             password="Root23",
-#             database="user_infos"
-#         )
-#         cursor = conn.cursor()
-#
-#         sql = (
-#             "INSERT INTO complaints (student_number, status, compliment, privacy, answer, category) "
-#             "VALUES (%s, %s, %s, %s, %s, %s)"
-#         )
-#         vals = (student_number, status, compliment, privacy, answer, category)
-#         cursor.execute(sql, vals)
-#         conn.commit()
-#         print("✅ Şikayet kaydı başarılı.")
-#         return True
-#
-#     except mysql.connector.Error as err:
-#         print("❌ Hata:", err)
-#         return False
-#
-#     finally:
-#         if conn.is_connected():
-#             cursor.close()
-#             conn.close()
-
 def addComplaintToDatabase(ogrenci_id, student_number, status, compliment, privacy, answer, category):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
 
         sql = (
-            "INSERT INTO complaints (ogrenci_id, student_number, status, compliment, privacy, answer, category) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            "INSERT INTO complaints (ogrenci_id,student_number, status, compliment, privacy, answer, category) "
+            "VALUES (%s,%s, %s, %s, %s, %s, %s)"
         )
-        vals = (ogrenci_id, student_number, status, compliment, privacy, answer, category)
+        vals = (ogrenci_id,student_number, status, compliment, privacy, answer, category)
         cursor.execute(sql, vals)
         conn.commit()
         print("✅ Şikayet kaydı başarılı.")
@@ -145,15 +102,9 @@ def addComplaintToDatabase(ogrenci_id, student_number, status, compliment, priva
             conn.close()
 
 
-
 def isUserExist(student_number, email):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
 
         sql = "SELECT * FROM ogrenciler WHERE student_number = %s OR eposta = %s"
@@ -171,14 +122,120 @@ def isUserExist(student_number, email):
             cursor.close()
             conn.close()
 
+
+def addAdminToDatabase(full_name, email, password, category):
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+        sql = "INSERT INTO adminler (full_name, email, password, category) VALUES (%s, %s, %s, %s)"
+        cursor.execute(sql, (full_name, email, password, category))
+        conn.commit()
+        return True
+    except mysql.connector.Error as err:
+        print("❌ Hata:", err)
+        return False
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+# db_connection.py içinde
+import mysql.connector
+
+def get_complaints_by_student(student_number):
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+        query = """
+            SELECT student_number, status, compliment, privacy, answer, category
+            FROM complaints
+            WHERE ogrenci_id = %s
+        """
+        cursor.execute(query, (student_number,))
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except mysql.connector.Error as err:
+        print("Database error:", err)
+        return []
+
+
+def get_all_public_complaints():
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+        query = """
+            SELECT student_number, status, compliment, privacy, answer, category
+            FROM complaints
+            WHERE privacy = 'public'
+        """
+        cursor.execute(query)
+        results = cursor.fetchall()
+        conn.close()
+        return results
+    except mysql.connector.Error as err:
+        print("Database error:", err)
+        return []
+
+
+
+
+def get_complaints_by_category_and_status(email, status="Process"):
+    try:
+        if email is None:
+            print("Uyarı: E-mail None geldi!")
+            return []
+
+        conn = mysql.connector.connect(**config)
+
+        cursor = conn.cursor()
+
+        query_admin = "SELECT category FROM adminler WHERE email = %s"
+        cursor.execute(query_admin, (email.strip(),))
+        admin_category = cursor.fetchone()
+
+        if not admin_category:
+            print(f"E-mail '{email}' ile eşleşen admin kategorisi bulunamadı.")
+            return []
+
+        category = admin_category[0]
+
+        query_complaints = """
+            SELECT complaint_id,student_number, status, compliment, privacy, answer, category
+            FROM complaints
+            WHERE category = %s AND status = %s
+        """
+        cursor.execute(query_complaints, (category, status))
+        results = cursor.fetchall()
+
+        conn.close()
+        return results
+
+    except mysql.connector.Error as err:
+        print("Veritabanı hatası:", err)
+        return []
+
+
+
+
+def isAdminExist(email):
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+        sql = "SELECT * FROM adminler WHERE email = %s"
+        cursor.execute(sql, (email,))
+        result = cursor.fetchone()
+        return result is not None
+    except mysql.connector.Error as err:
+        print("❌ Hata:", err)
+        return False
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
 def get_student_by_login(student_no, password):# bu ogrenciler tablosundaki idye erişmek için yazıldı
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
+        conn = mysql.connector.connect(**config)
         cursor = conn.cursor()
         query = """
             SELECT id, student_number 
@@ -197,93 +254,54 @@ def get_student_by_login(student_no, password):# bu ogrenciler tablosundaki idye
             cursor.close()
             conn.close()
 
-
-def addAdminToDatabase(full_name, email, password, category):
+def update_complaint_answer_and_status(complaint_id, answer_text, new_status):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
-        cursor = conn.cursor()
-        sql = "INSERT INTO adminler (full_name, email, password, category) VALUES (%s, %s, %s, %s)"
-        cursor.execute(sql, (full_name, email, password, category))
-        conn.commit()
-        return True
+        connection = mysql.connector.connect(**config)
+
+        cursor = connection.cursor()
+        sql = "UPDATE complaints SET answer = %s, status = %s WHERE complaint_id = %s"
+        cursor.execute(sql, (answer_text, new_status, complaint_id))
+        connection.commit()
+        return cursor.rowcount  # kaç satır güncellendi
     except mysql.connector.Error as err:
-        print("❌ Hata:", err)
-        return False
+        print("Veritabanı hatası:", err)
+        return -1
     finally:
-        if conn.is_connected():
+        if connection.is_connected():
             cursor.close()
-            conn.close()
-# db_connection.py içinde
-import mysql.connector
+            connection.close()
 
-def get_complaints_by_student(ogrenci_id):
+
+
+def get_all_complaints_by_category(email):
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
-        cursor = conn.cursor()
-        query = """
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
+
+        # Adminin kategorisini bul
+        cursor.execute("SELECT category FROM adminler WHERE email = %s", (email,))
+        category_result = cursor.fetchone()
+
+        if not category_result:
+            return []
+
+        category = category_result[0]
+
+        # Kategoriye ait tüm şikayetleri çek
+        sql = """
             SELECT student_number, status, compliment, privacy, answer, category
             FROM complaints
-            WHERE ogrenci_id = %s
+            WHERE category = %s
         """
-        cursor.execute(query, (ogrenci_id,))
-        results = cursor.fetchall()
-        conn.close()
-        return results
+        cursor.execute(sql, (category,))
+        result = cursor.fetchall()
+        return result
+
     except mysql.connector.Error as err:
-        print("Database error:", err)
+        print("Veritabanı hatası:", err)
         return []
 
-
-def get_all_public_complaints():
-    try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
-        cursor = conn.cursor()
-        query = """
-            SELECT student_number, status, compliment, privacy, answer, category
-            FROM complaints
-            WHERE privacy = 'public'
-        """
-        cursor.execute(query)
-        results = cursor.fetchall()
-        conn.close()
-        return results
-    except mysql.connector.Error as err:
-        print("Database error:", err)
-        return []
-
-
-def isAdminExist(email):
-    try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="Root23",
-            database="user_infos"
-        )
-        cursor = conn.cursor()
-        sql = "SELECT * FROM adminler WHERE email = %s"
-        cursor.execute(sql, (email,))
-        result = cursor.fetchone()
-        return result is not None
-    except mysql.connector.Error as err:
-        print("❌ Hata:", err)
-        return False
     finally:
-        if conn.is_connected():
+        if connection.is_connected():
             cursor.close()
-            conn.close()
+            connection.close()
