@@ -12,7 +12,9 @@ from database.db_connection import check_student_login
 from database.db_connection import get_student_by_login
 
 from complaintUser import ComplaintUserForm
-from ui.forgotPass import ForgotPassForm
+from ui.forgotEmail import forgotEmailForm
+
+
 
 class LoginUserForm(QWidget):
     def __init__(self):
@@ -100,6 +102,12 @@ class LoginUserForm(QWidget):
         self.forgot_label.setCursor(QCursor(Qt.PointingHandCursor))
         self.forgot_label.linkActivated.connect(self.open_forgot_password)
 
+        # ---------- Geri Butonu ----------
+        self.geri_btn = QPushButton("🔙", self)
+        self.geri_btn.setGeometry(340, 540, 50, 50)
+        self.geri_btn.setStyleSheet(button_style)
+        self.geri_btn.clicked.connect(self.open_back)
+
     # def try_login(self):
     #     student_no = self.student_no.text()
     #     password = self.password.text()
@@ -168,9 +176,15 @@ class LoginUserForm(QWidget):
         self.reg_window.show()
         self.close()
 
+    def open_back(self):
+        from ui.startFrame import StartFrameForm
+        self.main_window=StartFrameForm()
+        self.main_window.show()
+        self.close()
+
     def open_forgot_password(self):
         #subprocess.Popen([sys.executable, "forgot_password.py"])
-        self.forgotPass_window=ForgotPassForm()
+        self.forgotPass_window=forgotEmailForm("student")
         self.forgotPass_window.show()
         self.close()
 
