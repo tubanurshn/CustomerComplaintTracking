@@ -1,5 +1,6 @@
 import sys
 import subprocess
+from loginAdmin import LoginAdminForm
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit,
     QVBoxLayout, QPushButton
@@ -85,8 +86,6 @@ class StartFrameForm(QWidget):
 
     def open_admin_login(self):
         # loginAdmin.py yi çalıştır
-        from loginAdmin import LoginAdminForm
-
         self.new_window = LoginAdminForm()
         self.new_window.show()
         self.close() # Mevcut pencereyi kapat
