@@ -216,6 +216,35 @@ def get_complaints_by_category_and_status(email, status="Process"):
 
 
 
+def get_user_id_by_email(email, role):
+    try:
+        conn = mysql.connector.connect(**config)
+        cursor = conn.cursor()
+
+        if role == 'student':
+            query = "SELECT id FROM ogrenciler WHERE eposta = %s"
+        elif role == 'admin':
+            query = "SELECT id FROM adminler WHERE email = %s"
+        else:
+            raise ValueError("Rol sadece 'student' veya 'admin' olabilir.")
+
+        cursor.execute(query, (email,))
+        result = cursor.fetchone()
+
+        if result:
+            return result[0]  # sadece ID
+        else:
+            return None
+
+    except mysql.connector.Error as err:
+        print("Veritabanı hatası:", err)
+        return None
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
 
 def isAdminExist(email):
     try:
