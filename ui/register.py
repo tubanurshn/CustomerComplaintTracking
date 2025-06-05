@@ -78,6 +78,12 @@ class RegisterForm(QWidget):
         self.signup_btn.setStyleSheet(button_style)
         self.signup_btn.clicked.connect(self.register_user)
 
+        # ---------- Geri Butonu ----------
+        self.geri_btn = QPushButton("🔙", self)
+        self.geri_btn.setGeometry(340, 540, 50, 50)
+        self.geri_btn.setStyleSheet(button_style)
+        self.geri_btn.clicked.connect(self.open_back)
+
     def resizeEvent(self, event):
         self.background_label.resize(self.size())
 
@@ -131,6 +137,14 @@ class RegisterForm(QWidget):
 
         self.logUser_window=LoginUserForm()
         self.logUser_window.show()
+        self.close()
+
+    def open_back(self):
+
+        from ui.loginUser import LoginUserForm
+
+        self.login_user_window = LoginUserForm()
+        self.login_user_window.show()
         self.close()
 
 # --- PROGRAMI BAŞLATAN KISIM ---
