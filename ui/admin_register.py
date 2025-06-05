@@ -10,7 +10,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
 from database.db_connection import addAdminToDatabase, isAdminExist
-from ui.loginAdmin import LoginAdminForm
 
 
 class AdminRegisterForm(QWidget):
@@ -21,7 +20,7 @@ class AdminRegisterForm(QWidget):
 
         # Arka plan resmi
         self.background_label = QLabel(self)
-        image_path = os.path.join(os.path.dirname(__file__), "../assets/images/registerAdmin.jpg")
+        image_path = os.path.join(os.path.dirname(__file__), "../assets/images/admin_register.jpg")
         self.background_label.setPixmap(QPixmap(image_path))
         self.background_label.setScaledContents(True)
         self.background_label.resize(self.size())
@@ -52,31 +51,44 @@ class AdminRegisterForm(QWidget):
         # İsim Soyisim
         self.full_name = QLineEdit(self)
         self.full_name.setPlaceholderText("Full Name")
-        self.full_name.setGeometry(160, 180, 180, 40)
+        self.full_name.setGeometry(150, 250, 180, 30)
         self.full_name.setStyleSheet(input_style)
 
         # E-posta
         self.email = QLineEdit(self)
         self.email.setPlaceholderText("Email")
-        self.email.setGeometry(160, 240, 180, 40)
+        self.email.setGeometry(150, 300, 180, 30)
         self.email.setStyleSheet(input_style)
 
         # Şifre
         self.password = QLineEdit(self)
         self.password.setPlaceholderText("Password")
         self.password.setEchoMode(QLineEdit.Password)
-        self.password.setGeometry(160, 300, 180, 40)
+        self.password.setGeometry(150, 350, 180, 30)
         self.password.setStyleSheet(input_style)
 
         # Kategori
         self.category = QComboBox(self)
-        self.category.setGeometry(160, 360, 180, 40)
-        self.category.addItems(["Select Category", "Temizlik", "Eğitim", "Güvenlik", "Diğer"])
+        self.category.setGeometry(150, 400, 180, 30)
+        self.category.addItems(["Select Category", "Cleanliness", "Security", "Education", "Other"])
         self.category.setStyleSheet(input_style)
+        self.category.setStyleSheet("""
+            QComboBox {
+                background-color: white;
+                color: pink;
+                border: 1.5px solid #ccc;
+                border-radius: 10px;
+                padding: 6px;
+                font-size: 14px;
+            }
+            QComboBox:focus {
+                border: 2px solid #007ACC;
+            }
+        """)
 
         # Kayıt Butonu
         self.register_btn = QPushButton("Register", self)
-        self.register_btn.setGeometry(100, 430, 200, 50)
+        self.register_btn.setGeometry(100, 480, 200, 50)
         self.register_btn.setStyleSheet(button_style)
         self.register_btn.clicked.connect(self.register_admin)
 
@@ -97,8 +109,7 @@ class AdminRegisterForm(QWidget):
             QMessageBox.warning(self, "Warning", "Password must be at least 8 characters.")
             return
 
-        email_regex ='@'
-        if not re.match(email_regex, email):
+        if '@' not in email:
             QMessageBox.warning(self, "Warning", "Please enter a valid email address.")
             return
 
@@ -108,9 +119,7 @@ class AdminRegisterForm(QWidget):
 
         if addAdminToDatabase(full_name, email, password, category):
             QMessageBox.information(self, "Success", "Admin registered successfully.")
-            #subprocess.Popen([sys.executable, "loginAdmin.py"])
-            loginAdmin_window=LoginAdminForm()
-            loginAdmin_window.show()
+            subprocess.Popen([sys.executable, "loginAdmin.py"])
             self.close()
         else:
             QMessageBox.critical(self, "Error", "Error occurred during registration.")
