@@ -70,7 +70,7 @@ class AdminRegisterForm(QWidget):
         # Kategori
         self.category = QComboBox(self)
         self.category.setGeometry(150, 400, 180, 30)
-        self.category.addItems(["Select Category", "Cleanliness", "Security", "Education", "Other"])
+        self.category.addItems(["Select Category", "Cleanliness", "Security", "Education", "General Manager"])
         self.category.setStyleSheet(input_style)
         self.category.setStyleSheet("""
             QComboBox {
